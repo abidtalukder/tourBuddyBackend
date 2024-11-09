@@ -5,3 +5,7 @@ from .models import Tour
 def tourList(request):
     tours = Tour.objects.all()
     return render(request, 'tours/tour_list.html', {'tours': tours})
+
+def tourDetail(request, tourID):
+    tour = get_object_or_404(Tour, pk=tourID)
+    return render(request, 'tours/tour_detail.html', {'tour': tour})

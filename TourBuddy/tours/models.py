@@ -2,13 +2,11 @@ from django.db import models
 
 # Create your models here.
 
-# Location model for storing the name, description, location, and image of a
-# landmark. Landmarks include businesses, parks, restaurants, and other points
-# of interest.
+# Location model for storing the name and description. Landmarks include
+# businesses, parks, restaurants, and other points of interest.
 class Landmark(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    location = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
