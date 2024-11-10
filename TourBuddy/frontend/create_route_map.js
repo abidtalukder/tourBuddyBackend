@@ -32,12 +32,13 @@ async function processNextSpeech() {
 
     isSpeaking = true;
     const text = speechQueue.shift();
-
+    openai_key = await api_keys();
+    openai_key = openai_key.openai;
     try {
         const response = await fetch("https://api.openai.com/v1/audio/speech", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer sk-proj-Ms6vwWniAf76qA4En6SIT3BlbkFJbP1PJNdLJzZQkRLye1qR`,
+                "Authorization": openai_key,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -416,10 +417,11 @@ function skipFeedback() {
     document.getElementById('feedbackForm').classList.add('hidden');
 }
 
-function loadGoogleMapsScript() {
+async function loadGoogleMapsScript() {
+    google_key = await api_keys();
+    google_key = google_key.google;
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyD_P6xkyyx4MGnEU7tjaWULPsjZfecFQFY
-&libraries=geometry&callback=initMap`;
+    script.src = google_key;
     script.async = true;
     document.head.appendChild(script);
 }
