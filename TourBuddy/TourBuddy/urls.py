@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from tours import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tours/', include('tours.urls'))
+    path('tours/', include('tours.urls')),
+    path('submit-ratings', views.submitRatings, name = 'submit-ratings')
 ]

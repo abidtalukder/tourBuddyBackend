@@ -19,3 +19,12 @@ class Tour(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
+class Location(models.Model):
+    #id = models.IntegerField()
+    city = models.CharField(max_length=255)
+    rating = models.FloatField()
+    total = models.IntegerField()
+    users = models.JSONField()
+    journal = models.JSONField()
