@@ -85,13 +85,16 @@ function initMap() {
             map.setCenter(userLocation);
             const string_loc = "lat: " + position.coords.latitude + " lng: " + position.coords.longitude;
             
+           
             fetch(`http://127.0.0.1:8000/get-route/?startLocation=${encodeURIComponent(string_loc)}`)
                 .then(response => response.json())
                 .then(data => {
                     let locations = [];
                     currentCity = data.title; // Store the city
                     document.getElementById('cityBanner').textContent = `Exploring ${currentCity}`;
+                   
 
+                // Display distance and duration in the city banner
                     for(let i = 0; i < data.landmarks.length; i++) {
                         locations.push({
                             city: data.title,
@@ -164,8 +167,8 @@ function initMap() {
     }
 }
 // Add these speed control variables at the top with other globals
-const FAST_SPEED = 1; // Faster speed between landmarks
-const SLOW_SPEED = 75; // Slower speed near landmarks
+const FAST_SPEED = 4; // Faster speed between landmarks
+const SLOW_SPEED = 4; // Slower speed near landmarks
 const SLOW_DOWN_RADIUS = 400; // Distance to start slowing down (meters)
 const CHECK_RADIUS = 100; // Distance to trigger landmark visit (meters)
 let currentSpeed = FAST_SPEED;
@@ -327,7 +330,7 @@ function skipLogin() {
 function showFeedbackForm() {
     document.getElementById('feedbackForm').classList.remove('hidden');
     // Reset rating when showing form
-    selectedRating = null;
+    selectedRating = null;        
     updateStarDisplay();
 }
 
@@ -395,8 +398,8 @@ function submitFeedback() {
     console.log('Feedback submitted:', feedback);
 
     // Sending 
-    /*
-        fetch(`http://127.0.0.1:8000/submit-ratings/?startLocation=${encodeURIComponent(string_loc)}`,
+    
+    fetch(`http://127.0.0.1:8000/submit-ratings`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -406,7 +409,7 @@ function submitFeedback() {
     .then(response => response.json())
     .then(data => console.log('Success:', data))
     .catch((error) => console.error('Error:', error));
-    */
+    
 
     feedbackSubmitted = true;
     document.getElementById('feedbackForm').classList.add('hidden');
