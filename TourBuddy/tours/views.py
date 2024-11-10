@@ -22,9 +22,6 @@ from dotenv import load_dotenv
 import os
 import openai
 
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
 class TourListCreateView(generics.ListCreateAPIView):
     queryset = Tour.objects.all()
     serializer_class = TourSerializer

@@ -173,7 +173,7 @@ function initMap() {
 
 // Add these speed control variables at the top with other globals
 const FAST_SPEED = 4; // Faster speed between landmarks
-const SLOW_SPEED = 50; // Slower speed near landmarks
+const SLOW_SPEED = 70; // Slower speed near landmarks
 const SLOW_DOWN_RADIUS = 400; // Distance to start slowing down (meters)
 const CHECK_RADIUS = 100; // Distance to trigger landmark visit (meters)
 let currentSpeed = FAST_SPEED;
@@ -420,7 +420,6 @@ function submitFeedback() {
 
     // Sending 
     
-    fetch(`http://127.0.0.1:8000/submit-ratings`, {
     
     fetch(`http://127.0.0.1:8000/submit-ratings`, {
         method: 'POST',
