@@ -4,42 +4,42 @@ import openai
 
 # Function to generate 10 landmarks near the start location using OpenAI's API.
 # The API will return the name, description, latitude, and longitude of each
-# landmark.
+# landmark and generate a route based on the landmarks.
 def generateLandmarks(startLocation):
     landmarks = []
-    print("WUNZIR")
     try:
         # Get 10 landmarks near the start location in a specific format
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are in " + startLocation + ". Strictly Provide landmarks separated by a comma in this order, : (name, description, latitude, longitude). for example it should be (Berkshire Theatre Group, performing arts venue known for its great performances, 42.36, -73.29)"},
+                {"role": "system", "content": "You are in " + startLocation + " as latitude and longitude coordinates. Strictly provide 10 nearby landmarks/points of interest/cool locations in this specific format and make sure its only this format because we need to parse it like that : (name: description: latitude: longitude). for example it should be (Berkshire Theatre Group: performing arts venue known for its great performances: 42.36: -73.29) and seperate each entry by @, like this: (name: description: latitude: longitude)@(name: description: latitude: longitude), etc."},
                 {"role": "user", "content": "Generate 10 landmarks near " + startLocation}
             ]
         )
-        answer = response.choices[0]["message"]["content"].split("\n")
-        print(answer[0].split(", "))
-        # Parse the response to get the landmarks
-        # for message in response.choices[0]["message"]["content"]:
-            # print("WUNZIR")
-            # if message["role"] == "system":
-            #     continue
-            # print(message)
-            # landmark = message["content"].split(", ")
-            # print(landmark)
-            # name = landmark[0]
-            # description = landmark[1]
-            # latitude = landmark[2]
-            # longitude = landmark[3]
-
-            # landmarks.append({
-            #     "name": landmark[0],
-            #     "description": landmark[1],
-            #     "latitude": float(landmark[2]),
-            #     "longitude": float(landmark[3])
-            # })
-            # print(name, description, latitude, longitude)
-        # return landmarks
+        answer = response.choices[0]["message"]["content"]
+        # Parse the response to format the landmarks
+        for landmarks2 in answer.split("@"):
+            temp = landmarks2.split(": ")
+            landmarks.append({
+                "name": temp[0].lstrip("("),
+                "description": temp[1],
+                "latitude": float(temp[2]),
+                "longitude": float(temp[3].rstrip(")"))
+            })
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "You are in " + startLocation + ". Respond with just the city and state of the location you are in. For example, 'Albany, NY'."},
+                {"role": "user", "content": "What city and state is " + startLocation + " in?"}
+            ]
+        )
+        answer = response.choices[0]["message"]["content"]
+        print(answer)
+        route = {
+            "title": answer,
+            "landmarks": landmarks
+        }
+        return route
 
     except Exception as e:
         print("An error occured: ", e)
@@ -48,4 +48,4 @@ def generateLandmarks(startLocation):
 if __name__ == "__main__":
     load_dotenv()
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    generateLandmarks("(42.43, -73.40)")
+    generateLandmarks("lat: 42°43'29'N lng:73°40'42'W")
