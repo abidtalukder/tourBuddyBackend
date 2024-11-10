@@ -19,7 +19,11 @@ async function generateSpeech(text) {
         processNextSpeech();
     }
 }
-
+async function api_keys(){
+    const response = await fetch("http://localhost:8000/get_keys");
+    const data = await response.json();
+    return data;
+}
 async function processNextSpeech() {
     if (speechQueue.length === 0) {
         isSpeaking = false;

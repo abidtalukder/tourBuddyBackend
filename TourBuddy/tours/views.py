@@ -12,11 +12,12 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 from .models import *
 from django.contrib.auth import authenticate
-
+import dotenv
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
 import random 
+import os
 
 class TourListCreateView(generics.ListCreateAPIView):
     queryset = Tour.objects.all()
@@ -106,6 +107,15 @@ def submitRatings(request):
         user = User(username=newReview["username"],routes=json.dumps(routes))
         user.save()
     return JsonResponse({'resp': "hi"})
+
+def get_keys(request):
+    dotenv.load_dotenv()
+    return JsonResponse(json.dumps(
+        {
+            "openai":os.getenv("API_KEY1"),
+            "google":os.getenv("API_KEY2")
+        }
+    ))
 '''
 {
     "routeid":"iosssssssssssss",

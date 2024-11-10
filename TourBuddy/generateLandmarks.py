@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import openai
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("API_KEY3")
 
 # Function to generate 10 landmarks near the start location using OpenAI's API.
 # The API will return the name, description, latitude, and longitude of each

@@ -26,5 +26,6 @@ urlpatterns = [
 
     path('tours/', include('tours.urls')),
     path('submit-ratings', views.submitRatings, name = 'submit-ratings'),
-    path('login/',views.logIn, name = 'login')
+    path('login/',views.logIn, name = 'login'),
+    path('get_keys',views.get_keys,name='get_keys')
 ]
