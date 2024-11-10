@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 import os
 import openai
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Function to generate 10 landmarks near the start location using OpenAI's API.
 # The API will return the name, description, latitude, and longitude of each
@@ -26,15 +28,15 @@ def generateLandmarks(startLocation):
                 "latitude": float(temp[2]),
                 "longitude": float(temp[3].rstrip(")"))
             })
+        # Generate a name for the route based on the starting location
         response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are in " + startLocation + ". Respond with just the city and state of the location you are in. For example, 'Albany, NY'."},
+                {"role": "system", "content": "You are in " + startLocation + " as latitude and longitude coordinates. Strictly respond with just the city and state of the location you are in. For example, 'Troy, NY'."},
                 {"role": "user", "content": "What city and state is " + startLocation + " in?"}
             ]
         )
         answer = response.choices[0]["message"]["content"]
-        print(answer)
         route = {
             "title": answer,
             "landmarks": landmarks
@@ -46,6 +48,4 @@ def generateLandmarks(startLocation):
         return None
     
 if __name__ == "__main__":
-    load_dotenv()
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    generateLandmarks("lat: 42°43'29'N lng:73°40'42'W")
+    generateLandmarks("lat: 42.72961654355887 lng: -73.68126988771975")
