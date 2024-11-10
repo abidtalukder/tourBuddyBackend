@@ -5,8 +5,10 @@ from django.db import models
 # Location model for storing the name and description. Landmarks include
 # businesses, parks, restaurants, and other points of interest.
 class Landmark(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length = 100)
     description = models.TextField()
+    latitude = models.FloatField(default = 0.0)
+    longitude = models.FloatField(default = 0.0)
 
     def __str__(self):
         return self.name

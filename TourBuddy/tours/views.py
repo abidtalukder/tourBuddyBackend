@@ -1,7 +1,8 @@
 from rest_framework import generics
 from django.shortcuts import render, get_object_or_404
-from .models import Tour, Location
-from .serializers import TourSerializer, LocationSerializer
+from django.http import HttpResponse
+from .models import Tour, Landmark
+from .serializers import TourSerializer, LandmarkSerializer
 
 # Create your views here.
 # def tourList(request):
@@ -20,10 +21,13 @@ class TourDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tour.objects.all()
     serializer_class = TourSerializer
 
-class LocationListCreateView(generics.ListCreateAPIView):
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializer
+class LandmarkListCreateView(generics.ListCreateAPIView):
+    queryset = Landmark.objects.all()
+    serializer_class = LandmarkSerializer
 
-class LocationDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Location.objects.all()
-    serializer_class = LocationSerializer
+class LandmarkDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Landmark.objects.all()
+    serializer_class = LandmarkSerializer
+
+def home(request):
+    return HttpResponse("Welcome to TourBuddy API!")

@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from .models import Tour, Location
+from .models import Tour, Landmark
 
-class LocationSerializer(serializers.ModelSerializer):
+class LandmarkSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Location
-        fields = ['name', 'description']
+        model = Landmark
+        fields = ['name', 'description', "latitude", "longitude"]
 
 class TourSerializer(serializers.ModelSerializer):
-    locations = LocationSerializer(many=True)  # Include related locations in each tour
+    landmarks = LandmarkSerializer(many=True)  # Include related locations in each tour
     class Meta:
         model = Tour
         fields = ['title', 'landmarks']
