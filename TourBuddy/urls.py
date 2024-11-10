@@ -20,11 +20,6 @@ from tours import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.home, name="home"),
-    path('api/', include('tours.urls')),
-    path("get-route/", views.getRoute, name = "get-route"),
-
     path('tours/', include('tours.urls')),
-    path('submit-ratings', views.submitRatings, name = 'submit-ratings'),
-    path('login/',views.logIn, name = 'login')
+    path('submit-ratings', views.submitRatings, name = 'submit-ratings')
 ]

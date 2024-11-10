@@ -21,3 +21,23 @@ class Tour(models.Model):
 
     def __str__(self):
         return self.title
+
+class Route(models.Model):
+    # city - routeid - routename - average - entries - totals - users 
+    city = models.CharField(max_length=255)
+    routeid = models.CharField(max_length=2048)
+    routearray = models.JSONField()
+    average = models.FloatField()
+    total = models.IntegerField()
+    journal = models.JSONField()
+    users = models.JSONField()
+class User(models.Model):
+    username = models.CharField(max_length=255)
+    routes = models.JSONField()
+class Location(models.Model):
+    #id = models.IntegerField()
+    city = models.CharField(max_length=255)
+    rating = models.FloatField()
+    total = models.IntegerField()
+    users = models.JSONField()
+    journal = models.JSONField()
