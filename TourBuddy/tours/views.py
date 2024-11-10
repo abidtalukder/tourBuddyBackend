@@ -39,8 +39,8 @@ def home(request):
     return HttpResponse("Welcome to TourBuddy API!")
 
 def getRoute(request):
-    startingLocation = "lat: 42.72961654355887 lng: -73.68126988771975"
-    return JsonResponse(generateLandmarks.generateLandmarks(startingLocation))
+    #startingLocation = "lat: 42.72961654355887 lng: -73.68126988771975"
+    return JsonResponse(generateLandmarks.generateLandmarks(request.GET.get("startLocation")))
 def tourDetail(request, tourID):
     tour = get_object_or_404(Tour, pk=tourID)
     return render(request, 'tours/tour_detail.html', {'tour': tour})

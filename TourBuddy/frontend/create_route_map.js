@@ -83,15 +83,19 @@ function initMap() {
         navigator.geolocation.getCurrentPosition(position => {
             const userLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             map.setCenter(userLocation);
-            const string_loc = "lat: " + position.coords.latitude + " lng: " + position.coords.longitude;
+            const string_loc = "lat: " + position.coords.latitude + " long: " + position.coords.longitude;
             
+           
             fetch(`http://127.0.0.1:8000/get-route/?startLocation=${encodeURIComponent(string_loc)}`)
                 .then(response => response.json())
                 .then(data => {
                     let locations = [];
                     currentCity = data.title; // Store the city
-                    document.getElementById('cityBanner').textContent = `Exploring ${currentCity}`;
 
+                    document.getElementById('cityBanner').textContent = `Exploring ${currentCity}`;
+                   
+
+                // Display distance and duration in the city banner
                     for(let i = 0; i < data.landmarks.length; i++) {
                         locations.push({
                             city: data.title,
@@ -163,9 +167,10 @@ function initMap() {
         alert("Geolocation is not supported by this browser.");
     }
 }
+
 // Add these speed control variables at the top with other globals
-const FAST_SPEED = 1; // Faster speed between landmarks
-const SLOW_SPEED = 75; // Slower speed near landmarks
+const FAST_SPEED = 4; // Faster speed between landmarks
+const SLOW_SPEED = 50; // Slower speed near landmarks
 const SLOW_DOWN_RADIUS = 400; // Distance to start slowing down (meters)
 const CHECK_RADIUS = 100; // Distance to trigger landmark visit (meters)
 let currentSpeed = FAST_SPEED;
@@ -181,83 +186,99 @@ function startRoute() {
     lastHeading = 0;
     currentSpeed = FAST_SPEED;
 
-    function moveMarker() {
-        if (currentIndex < routePath.length - 1) {
-            const currentPos = routePath[currentIndex];
-            const nextPos = routePath[Math.min(currentIndex + 1, routePath.length - 1)];
-            
-            // Update car position and rotation
-            if (carMarker) {
-                carMarker.setPosition(currentPos);
-                
-                const newHeading = google.maps.geometry.spherical.computeHeading(currentPos, nextPos);
-                lastHeading = smoothRotation(lastHeading, newHeading);
-                
-                carMarker.setIcon({
-                    path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                    scale: 6,
-                    fillColor: "#00F",
-                    fillOpacity: 0.8,
-                    strokeWeight: 1,
-                    rotation: lastHeading
-                });
+    let currentInfoWindow = null; // Track the currently open InfoWindow
 
-                // Check proximity to all landmarks
-                let nearLandmark = false;
-                
-                if (window.checkpoints) {
-                    window.checkpoints.forEach(loc => {
-                        if (!visitedLocations.has(loc.name)) {
-                            const distance = google.maps.geometry.spherical.computeDistanceBetween(
-                                currentPos,
-                                new google.maps.LatLng(loc.lat, loc.lng)
-                            );
+function moveMarker() {
+    if (currentIndex < routePath.length - 1) {
+        const currentPos = routePath[currentIndex];
+        const nextPos = routePath[Math.min(currentIndex + 1, routePath.length - 1)];
 
-                            // Check if we're entering the slow-down zone
-                            if (distance < SLOW_DOWN_RADIUS) {
-                                nearLandmark = true;
+        // Update car position and rotation
+        if (carMarker) {
+            carMarker.setPosition(currentPos);
+
+            const newHeading = google.maps.geometry.spherical.computeHeading(currentPos, nextPos);
+            lastHeading = smoothRotation(lastHeading, newHeading);
+
+            carMarker.setIcon({
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 6,
+                fillColor: "#00F",
+                fillOpacity: 0.8,
+                strokeWeight: 1,
+                rotation: lastHeading
+            });
+
+            // Check proximity to all landmarks
+            let nearLandmark = false;
+
+            if (window.checkpoints) {
+                window.checkpoints.forEach(loc => {
+                    if (!visitedLocations.has(loc.name)) {
+                        const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                            currentPos,
+                            new google.maps.LatLng(loc.lat, loc.lng)
+                        );
+
+                        // Check if we're entering the slow-down zone
+                        if (distance < SLOW_DOWN_RADIUS) {
+                            nearLandmark = true;
+                        }
+
+                        // Check if we've reached the landmark
+                        if (distance < CHECK_RADIUS) {
+                            console.log(`Reaching ${loc.name}`);
+                            generateSpeech(`Arriving at ${loc.name}. ${loc.desc}`);
+                            visitedLocations.add(loc.name);
+
+                            // Close previous InfoWindow if open
+                            if (currentInfoWindow) {
+                                currentInfoWindow.close();
                             }
 
-                            // Check if we've reached the landmark
-                            if (distance < CHECK_RADIUS) {
-                                console.log(`Reaching ${loc.name}`);
-                                generateSpeech(`Arriving at ${loc.name}. ${loc.desc}`);
-                                visitedLocations.add(loc.name);
-                                
-                                new google.maps.InfoWindow({
-                                    content: `<div style="color: black;">
+                            // Create and open a new InfoWindow
+                            currentInfoWindow = new google.maps.InfoWindow({
+                                content: `<div style="color: black;">
                                               <b>${loc.name}</b><br>
                                               ${loc.desc}
                                             </div>`,
-                                    position: currentPos
-                                }).open(map);
-                            }
+                                position: currentPos
+                            });
+                            currentInfoWindow.open(map);
+
+                            // Set a timeout to automatically close the InfoWindow after 5 seconds
+                            setTimeout(() => {
+                                if (currentInfoWindow) {
+                                    currentInfoWindow.close();
+                                }
+                            }, 5000); // 5000 ms = 5 seconds
                         }
-                    });
-                }
-
-                // Update speed without recreating the interval
-                currentSpeed = nearLandmark ? SLOW_SPEED : FAST_SPEED;
-
-                map.panTo(currentPos);
+                    }
+                });
             }
 
-            currentIndex++;
-            
-            // Schedule next movement based on current speed
-            setTimeout(moveMarker, currentSpeed);
+            // Update speed without recreating the interval
+            currentSpeed = nearLandmark ? SLOW_SPEED : FAST_SPEED;
+
+            map.panTo(currentPos);
+        }
+
+        currentIndex++;
+
+        // Schedule next movement based on current speed
+        setTimeout(moveMarker, currentSpeed);
+    } else {
+        if (visitedLocations.size > 0) {
+            const visitedList = [...visitedLocations].join(", ");
+            generateSpeech(`Congratulations! You have completed this tour! You visited: ${visitedList}. Feel free to leave both a review and a journal entry of your experience! We hope you use TourBuddy again!`);
+            console.log("Visited locations:", [...visitedLocations]);
+            showFeedbackForm();
         } else {
-            if (visitedLocations.size > 0) {
-                const visitedList = [...visitedLocations].join(", ");
-                generateSpeech(`Congratulations! You have completed this tour! You visited: ${visitedList}. Feel free to leave both a review and a journal entry of your experience! We hope you use TourBuddy again!`);
-                console.log("Visited locations:", [...visitedLocations]);
-                showFeedbackForm();
-            } else {
-                console.log("No locations were visited during the tour.");
-                generateSpeech("The tour has ended, but it seems we didn't reach any of the landmarks. Would you like to try again?");
-            }
+            console.log("No locations were visited during the tour.");
+            generateSpeech("The tour has ended, but it seems we didn't reach any of the landmarks. Would you like to try again?");
         }
     }
+}
 
     // Start the movement
     moveMarker();
@@ -395,8 +416,8 @@ function submitFeedback() {
     console.log('Feedback submitted:', feedback);
 
     // Sending 
-    /*
-        fetch(`http://127.0.0.1:8000/submit-ratings/?startLocation=${encodeURIComponent(string_loc)}`,
+    
+    fetch(`http://127.0.0.1:8000/submit-ratings`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -406,7 +427,7 @@ function submitFeedback() {
     .then(response => response.json())
     .then(data => console.log('Success:', data))
     .catch((error) => console.error('Error:', error));
-    */
+    
 
     feedbackSubmitted = true;
     document.getElementById('feedbackForm').classList.add('hidden');
