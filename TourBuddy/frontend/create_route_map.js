@@ -32,13 +32,13 @@ async function processNextSpeech() {
 
     isSpeaking = true;
     const text = speechQueue.shift();
-    openai_key = await api_keys();
-    openai_key = openai_key.openai;
+    opena_k = await api_keys();
+    opena_k = openai_k.opena;
     try {
         const response = await fetch("https://api.openai.com/v1/audio/speech", {
             method: "POST",
             headers: {
-                "Authorization": openai_key,
+                "Authorization": opena_k,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({

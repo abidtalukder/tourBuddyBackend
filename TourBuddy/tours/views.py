@@ -112,7 +112,7 @@ def get_keys(request):
     dotenv.load_dotenv()
     return JsonResponse(
         {
-            "openai":os.getenv("API_KEY1"),
+            "opena":os.getenv("API_KEY1"),
             "google":os.getenv("API_KEY2")
         }
     )
