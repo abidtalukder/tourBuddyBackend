@@ -22,6 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.home, name="home"),
     path('api/', include('tours.urls')),
-    path("get-route", views.getRoute, name = "get-route")
+    path("get-route/", views.getRoute, name = "get-route")
 
 ]
