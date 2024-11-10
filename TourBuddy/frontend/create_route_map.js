@@ -96,6 +96,9 @@ function initMap() {
                    
 
                 // Display distance and duration in the city banner
+                   
+
+                // Display distance and duration in the city banner
                     for(let i = 0; i < data.landmarks.length; i++) {
                         locations.push({
                             city: data.title,
@@ -348,7 +351,7 @@ function skipLogin() {
 function showFeedbackForm() {
     document.getElementById('feedbackForm').classList.remove('hidden');
     // Reset rating when showing form
-    selectedRating = null;
+    selectedRating = null;        
     updateStarDisplay();
 }
 
@@ -418,6 +421,8 @@ function submitFeedback() {
     // Sending 
     
     fetch(`http://127.0.0.1:8000/submit-ratings`, {
+    
+    fetch(`http://127.0.0.1:8000/submit-ratings`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -427,6 +432,7 @@ function submitFeedback() {
     .then(response => response.json())
     .then(data => console.log('Success:', data))
     .catch((error) => console.error('Error:', error));
+    
     
 
     feedbackSubmitted = true;

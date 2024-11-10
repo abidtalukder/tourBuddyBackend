@@ -18,6 +18,12 @@ from django.http import JsonResponse
 import json
 import random 
 import os
+from dotenv import load_dotenv
+import os
+import openai
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class TourListCreateView(generics.ListCreateAPIView):
     queryset = Tour.objects.all()
