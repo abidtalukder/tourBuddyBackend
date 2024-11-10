@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-=ij)$(pa+yk_jg&9*u2hjq*2vge2=0e!#md!2s%uq5le91#&g0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*", "https://*"]
 
 
 # Application definition
@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
-    "tours"
+    "tours",
+    "corsheaders"
 ]
 
 MIDDLEWARE = [
@@ -49,10 +50,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'TourBuddy.urls'
 
+CORS_ALLOWED_ORIGINS = [
+    "HTTPS://*",
+    "HTTP://*",
+]
+CORS_ALLOW_ALL_ORIGINS = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
