@@ -420,8 +420,9 @@ function skipFeedback() {
 async function loadGoogleMapsScript() {
     google_key = await api_keys();
     google_key = google_key.google;
+    console.log(google_key)
     const script = document.createElement('script');
-    script.src = google_key;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${google_key}&libraries=geometry&callback=initMap`;
     script.async = true;
     document.head.appendChild(script);
 }

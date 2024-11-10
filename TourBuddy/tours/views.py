@@ -110,12 +110,12 @@ def submitRatings(request):
 
 def get_keys(request):
     dotenv.load_dotenv()
-    return JsonResponse(json.dumps(
+    return JsonResponse(
         {
             "openai":os.getenv("API_KEY1"),
             "google":os.getenv("API_KEY2")
         }
-    ))
+    )
 '''
 {
     "routeid":"iosssssssssssss",
