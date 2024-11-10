@@ -172,8 +172,8 @@ function initMap() {
 }
 
 // Add these speed control variables at the top with other globals
-const FAST_SPEED = 4; // Faster speed between landmarks
-const SLOW_SPEED = 70; // Slower speed near landmarks
+const FAST_SPEED = 30;// Faster speed between landmarks
+const SLOW_SPEED = 96; // Slower speed near landmarks
 const SLOW_DOWN_RADIUS = 400; // Distance to start slowing down (meters)
 const CHECK_RADIUS = 100; // Distance to trigger landmark visit (meters)
 let currentSpeed = FAST_SPEED;
@@ -236,7 +236,11 @@ function moveMarker() {
 
                             // Close previous InfoWindow if open
                             if (currentInfoWindow) {
-                                currentInfoWindow.close();
+                                setTimeout(() => {
+                                    if (currentInfoWindow) {
+                                        currentInfoWindow.close();
+                                    }
+                                }, 10000); // 2000 ms = 2 seconds
                             }
 
                             // Create and open a new InfoWindow
@@ -254,7 +258,7 @@ function moveMarker() {
                                 if (currentInfoWindow) {
                                     currentInfoWindow.close();
                                 }
-                            }, 5000); // 5000 ms = 5 seconds
+                            }, 7000); // 5000 ms = 5 seconds
                         }
                     }
                 });
@@ -412,7 +416,7 @@ function submitFeedback() {
         city: currentCity,
         routeid: routePoints.join(''),
 
-        routearray: visitedLocations,
+        routearray: routePoints,
         //timestamp: new Date().toISOString()
     };
 
